@@ -59,9 +59,9 @@ export default function LeadMagnetPage() {
       </nav>
 
       <main className="min-h-screen flex items-center pt-24 pb-12 px-[5%]">
-        <div className="max-w-[1200px] mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
+        <div className="max-w-[1400px] mx-auto w-full grid md:grid-cols-[1.2fr_1fr] gap-12 items-center">
           {/* Left Side: 3D Visual */}
-          <div className="relative h-[500px] md:h-[600px] w-full animate-[fadeInUp_1s_ease]">
+          <div className="relative h-[500px] md:h-[600px] w-full md:w-[120%] md:-ml-[10%] animate-[fadeInUp_1s_ease]">
             <iframe
               src="https://my.spline.design/nexbotrobotcharacterconcept-HiSgMTTXijvS9MMAxqNvexb4/"
               className="w-full h-full border-none"
