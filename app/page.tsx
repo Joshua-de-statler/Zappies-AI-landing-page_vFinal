@@ -6,9 +6,6 @@ import { useState } from "react"
 import Link from "next/link"
 import { Background } from "@/components/background"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Check } from "lucide-react"
@@ -48,14 +45,16 @@ export default function LeadMagnetPage() {
           >
             Zappies AI
           </Link>
-          <Link href="/demo">
+          {/* --- CHANGE IS HERE --- */}
+          {/* This now links directly to your Calendly page */}
+          <a href="https://calendly.com/zappiesai1/30min" target="_blank" rel="noopener noreferrer">
             <Button
               variant="outline"
               className="px-6 py-2 bg-transparent border-[#C41E3A] text-[#EDE7C7] rounded-full font-semibold hover:bg-[#C41E3A] transition-all"
             >
               Book a Demo
             </Button>
-          </Link>
+          </a>
         </div>
       </nav>
 
@@ -108,36 +107,16 @@ export default function LeadMagnetPage() {
               </div>
             </div>
 
-            <Card className="bg-[#8B1538]/10 backdrop-blur-md border-[#C41E3A]/20">
-              <CardHeader>
-                <CardTitle className="text-xl text-[#EDE7C7]">Get Your Free Playbook Now</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
-                  <div className="w-full space-y-2">
-                    <Label htmlFor="email" className="sr-only">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-14 bg-[#200E01]/50 border-[#C41E3A]/30 text-[#EDE7C7] placeholder:text-[#EDE7C7]/40 text-lg"
-                      placeholder="Enter your best email address"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="h-14 px-8 text-lg bg-gradient-to-r from-[#C41E3A] to-[#8B1538] text-[#EDE7C7] rounded-md font-semibold hover:scale-105 transition-all disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Sending..." : "Download Now"}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+            <a
+              href="https://calendly.com/zappiesai1/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <Button className="h-16 px-12 text-xl bg-gradient-to-r from-[#C41E3A] to-[#8B1538] text-[#EDE7C7] rounded-md font-semibold hover:scale-105 transition-all shadow-lg shadow-[#C41E3A]/30">
+                Book Your Free Strategy Call
+              </Button>
+            </a>
           </div>
         </div>
       </main>
