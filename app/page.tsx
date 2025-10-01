@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Check, Bot, Clock, Zap } from "lucide-react"
+import { Bot, Clock, Zap } from "lucide-react"
+import { supabase } from "@/lib/supabaseClient" // Import Supabase client
 
 export default function LeadMagnetPage() {
   const { toast } = useToast()
@@ -20,16 +21,24 @@ export default function LeadMagnetPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // This simulates sending the data to your email marketing service
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const { error } = await supabase.from('leads').insert({ email: email })
 
-    toast({
-      title: "Success! Your free bot is on its way.",
-      description: "Please check your inbox for setup instructions.",
-    })
+    if (error) {
+      toast({
+        title: "Error!",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      })
+      console.error("Supabase error:", error)
+    } else {
+      toast({
+        title: "Success! Your free bot is on its way.",
+        description: "Please check your inbox for setup instructions.",
+      })
+      setEmail("")
+    }
 
     setIsSubmitting(false)
-    setEmail("")
   }
 
   return (
