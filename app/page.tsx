@@ -9,27 +9,51 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Check, Bot, Clock, Zap } from "lucide-react"
+import { Bot, Clock, Zap } from "lucide-react"
+import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 
 export default function LeadMagnetPage() {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [email, setEmail] = useState("")
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // This simulates sending the data to your email marketing service
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const supabase = getSupabaseBrowserClient()
 
-    toast({
-      title: "Success! Your free bot is on its way.",
-      description: "Please check your inbox for setup instructions.",
-    })
+      const { error } = await supabase.from("leads").insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        },
+      ])
 
-    setIsSubmitting(false)
-    setEmail("")
+      if (error) throw error
+
+      toast({
+        title: "Success! Your free bot is on its way.",
+        description: "We'll contact you shortly to set up your AI assistant.",
+      })
+
+      setFormData({ name: "", email: "", phone: "" })
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      toast({
+        title: "Oops! Something went wrong.",
+        description: "Please try again or contact support.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -78,45 +102,65 @@ export default function LeadMagnetPage() {
               Stop Losing Leads on WhatsApp. Get a Free AI Assistant in 5 Minutes.
             </h1>
             <p className="text-lg text-[#EDE7C7]/70 mb-8 leading-relaxed">
-              Instantly answer FAQs, qualify leads, and never miss an opportunity again. Our pre-built AI bot works 24/7, even while you're on-site.
+              Instantly answer FAQs, qualify leads, and never miss an opportunity again. Our pre-built AI bot works
+              24/7, even while you're on-site.
             </p>
 
             <div className="space-y-4 mb-10">
               <div className="flex items-start gap-3">
                 <Zap className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
                 <p className="text-[#EDE7C7]/90">
-                  <span className="font-bold text-[#EDE7C7]">Instant Responses:</span> Answer customer questions in seconds, 24/7.
+                  <span className="font-bold text-[#EDE7C7]">Instant Responses:</span> Answer customer questions in
+                  seconds, 24/7.
                 </p>
               </div>
               <div className="flex items-start gap-3">
                 <Bot className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
                 <p className="text-[#EDE7C7]/90">
-                  <span className="font-bold text-[#EDE7C7]">Pre-built & Ready:</span> No setup required. Just connect your WhatsApp and go.
+                  <span className="font-bold text-[#EDE7C7]">Pre-built & Ready:</span> No setup required. Just connect
+                  your WhatsApp and go.
                 </p>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
                 <p className="text-[#EDE7C7]/90">
-                  <span className="font-bold text-[#EDE7C7]">Save 5+ Hours a Week:</span> Let your AI assistant handle the repetitive questions.
+                  <span className="font-bold text-[#EDE7C7]">Save 5+ Hours a Week:</span> Let your AI assistant handle
+                  the repetitive questions.
                 </p>
               </div>
             </div>
 
-            <form id="get-free-bot" onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
+            <form id="get-free-bot" onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                type="text"
+                placeholder="Your name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="h-14 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md"
+              />
               <Input
                 type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
-                className="h-16 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md flex-grow"
+                className="h-14 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md"
+              />
+              <Input
+                type="tel"
+                placeholder="Your phone number"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                required
+                className="h-14 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md"
               />
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-16 px-12 text-xl bg-gradient-to-r from-[#C41E3A] to-[#8B1538] text-[#EDE7C7] rounded-md font-semibold hover:scale-105 transition-all shadow-lg shadow-[#C41E3A]/30"
+                className="w-full h-14 text-xl bg-gradient-to-r from-[#C41E3A] to-[#8B1538] text-[#EDE7C7] rounded-md font-semibold hover:scale-105 transition-all shadow-lg shadow-[#C41E3A]/30"
               >
-                {isSubmitting ? 'Sending...' : 'Get Your Free Bot'}
+                {isSubmitting ? "Sending..." : "Get Your Free Bot"}
               </Button>
             </form>
           </div>
