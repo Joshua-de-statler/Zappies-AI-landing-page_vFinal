@@ -6,29 +6,53 @@ import { useState } from "react"
 import Link from "next/link"
 import { Background } from "@/components/background"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Check } from "lucide-react"
+import { Bot, Clock, Zap } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
 export default function LeadMagnetPage() {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // This simulates sending the data to your email marketing service
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const supabase = createClient()
 
-    toast({
-      title: "Success! Your Guide is on its way.",
-      description: "Please check your inbox for the download link.",
-    })
+      const { error } = await supabase.from("leads").insert({
+        name,
+        email,
+        phone: phone || null,
+      })
 
-    setIsSubmitting(false)
-    setEmail("")
+      if (error) throw error
+
+      toast({
+        title: "Success! We'll be in touch soon.",
+        description: "Your information has been received. We'll contact you shortly to set up your free AI assistant.",
+      })
+
+      // Reset form
+      setName("")
+      setEmail("")
+      setPhone("")
+    } catch (error) {
+      console.error("Error submitting lead:", error)
+      toast({
+        title: "Oops! Something went wrong.",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -45,14 +69,12 @@ export default function LeadMagnetPage() {
           >
             Zappies AI
           </Link>
-          {/* --- CHANGE IS HERE --- */}
-          {/* This now links directly to your Calendly page */}
-          <a href="https://calendly.com/zappiesai1/30min" target="_blank" rel="noopener noreferrer">
+          <a href="#get-free-bot">
             <Button
               variant="outline"
               className="px-6 py-2 bg-transparent border-[#C41E3A] text-[#EDE7C7] rounded-full font-semibold hover:bg-[#C41E3A] transition-all"
             >
-              Book a Demo
+              Get Your Free Bot
             </Button>
           </a>
         </div>
@@ -73,50 +95,72 @@ export default function LeadMagnetPage() {
           {/* Right Side: Content & Lead Capture Form */}
           <div className="z-10 animate-[fadeInUp_1.2s_ease]">
             <div className="inline-block px-5 py-2 bg-[#C41E3A]/20 border border-[#C41E3A] rounded-full text-sm mb-5">
-              📘 Free Builder's Playbook
+              🤖 Free WhatsApp AI Assistant
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-[#EDE7C7] text-balance">
-              The AI Playbook: 5 Strategies to Automate Leads & Streamline Projects
+              Stop Losing Leads on WhatsApp. Get a Free AI Assistant in 5 Minutes.
             </h1>
             <p className="text-lg text-[#EDE7C7]/70 mb-8 leading-relaxed">
-              Stop losing high-value clients and letting admin slow you down. This exclusive guide reveals the AI
-              strategies top South African builders are using to scale their operations.
+              Instantly answer FAQs, qualify leads, and never miss an opportunity again. Our pre-built AI bot works
+              24/7, even while you're on-site.
             </p>
 
             <div className="space-y-4 mb-10">
               <div className="flex items-start gap-3">
-                <Check className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
+                <Zap className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
                 <p className="text-[#EDE7C7]/90">
-                  <span className="font-bold text-[#EDE7C7]">Instantly Qualify Leads:</span> Identify high-ticket
-                  clients 24/7, even while you're on-site.
+                  <span className="font-bold text-[#EDE7C7]">Instant Responses:</span> Answer customer questions in
+                  seconds, 24/7.
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <Check className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
+                <Bot className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
                 <p className="text-[#EDE7C7]/90">
-                  <span className="font-bold text-[#EDE7C7]">Automate Client Updates:</span> Save 10+ hours a week by
-                  automating communication without losing the personal touch.
+                  <span className="font-bold text-[#EDE7C7]">Pre-built & Ready:</span> No setup required. Just connect
+                  your WhatsApp and go.
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <Check className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
+                <Clock className="w-6 h-6 text-[#C41E3A] mt-1 flex-shrink-0" />
                 <p className="text-[#EDE7C7]/90">
-                  <span className="font-bold text-[#EDE7C7]">Unlock a Competitive Edge:</span> Implement the exact AI
-                  workflow that gives you an unfair advantage in a crowded market.
+                  <span className="font-bold text-[#EDE7C7]">Save 5+ Hours a Week:</span> Let your AI assistant handle
+                  the repetitive questions.
                 </p>
               </div>
             </div>
 
-            <a
-              href="https://calendly.com/zappiesai1/30min"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block"
-            >
-              <Button className="h-16 px-12 text-xl bg-gradient-to-r from-[#C41E3A] to-[#8B1538] text-[#EDE7C7] rounded-md font-semibold hover:scale-105 transition-all shadow-lg shadow-[#C41E3A]/30">
-                Book Your Free Strategy Call
+            <form id="get-free-bot" onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                type="text"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="h-14 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md"
+              />
+              <Input
+                type="email"
+                placeholder="Your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="h-14 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md"
+              />
+              <Input
+                type="tel"
+                placeholder="Your phone (optional)"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="h-14 px-6 text-lg bg-[#EDE7C7]/10 border-[#C41E3A] text-white rounded-md"
+              />
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-16 px-12 text-xl bg-gradient-to-r from-[#C41E3A] to-[#8B1538] text-[#EDE7C7] rounded-md font-semibold hover:scale-105 transition-all shadow-lg shadow-[#C41E3A]/30"
+              >
+                {isSubmitting ? "Submitting..." : "Get Your Free Bot"}
               </Button>
-            </a>
+            </form>
           </div>
         </div>
       </main>
